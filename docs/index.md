@@ -40,6 +40,7 @@ get-started/install
 
 user-guide/data-preparation
 user-guide/training-examples
+user-guide/sft-tutorial
 user-guide/parallelism-guide
 ```
 

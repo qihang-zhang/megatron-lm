@@ -9,6 +9,7 @@ quickstart
 msc_integration
 data-preparation
 training-examples
+sft-tutorial
 parallelism-guide
 features/index
 ```

@@ -171,7 +171,7 @@ torchrun --nproc_per_node=1 finetune.py \
     --export-te-mcore-model
 ```
 
-> **Note:** The model architecture arguments (e.g., `--num-layers`, `--hidden-size`) must match the Qwen3-0.6B configuration exactly. These values are sourced from `examples/post_training/modelopt/conf/Qwen/Qwen3-0.6B.sh`.
+> **Note:** The model architecture arguments (e.g., `--num-layers`, `--hidden-size`) must match the Qwen3-0.6B configuration exactly. These values are sourced from `examples/post_training/modelopt/conf/Qwen/Qwen3-0.6B.sh`. In particular, `--max-position-embeddings 40960` is the Qwen3-0.6B model's native RoPE context window (larger than `--seq-length` to allow for extended context), and `--make-vocab-size-divisible-by 1187` ensures the padded vocabulary size matches the model's embedding table.
 
 ## Step 4: Customizing Training Hyperparameters
 

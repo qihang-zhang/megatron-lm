@@ -16,13 +16,46 @@ The SFT workflow in Megatron-LM consists of the following steps:
 
 - **Hardware**: At least 1 NVIDIA GPU (Ampere or newer recommended for BF16 support).
 - **Software**: Python 3.10+, PyTorch 2.0+, CUDA 12+.
-- **Megatron-LM**: A working installation of this repository (see [Installation Guide](../get-started/install.md)).
 
-Install the required Python packages:
+### Install with uv (released package only)
+
+Use [uv](https://docs.astral.sh/uv/) to install the published **megatron-core** package from PyPI. SFT scripts and examples live in this repo—clone it only to run them (no need to install the repo with pip).
+
+1. **Install uv** (if needed): `curl -LsSf https://astral.sh/uv/install.sh | sh`, then `source $HOME/.local/bin/env` (or `pip install uv`).
+
+2. **Create and activate a venv:**
+   ```bash
+   uv venv --python 3.12
+   source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+   ```
+
+3. **Install the released Megatron Core with MLM + dev extras:**
+   ```bash
+   uv pip install "setuptools<80.0.0,>=77.0.0" "packaging>=24.2"
+   uv pip install --no-build-isolation megatron-core[mlm,dev]
+   ```
+
+4. **Install SFT tutorial deps:** `uv pip install nvidia-modelopt datasets huggingface_hub`
+
+5. **Get the scripts:** `git clone https://github.com/NVIDIA/Megatron-LM.git && cd Megatron-LM` — then run SFT from `examples/post_training/modelopt` (see Step 3 below).
+
+**Command breakdown**
+
+- **`--no-build-isolation`** — Build the package using the current environment’s tools (setuptools, packaging) instead of a temporary isolated env. Megatron Core expects specific setuptools versions, so we install them in step 3 and use this flag so the build sees them. If PyPI serves a pre-built wheel for your platform, the build step may be skipped and this flag has no effect.
+- **`[mlm,dev]`** — Optional “extras” for the `megatron-core` package. `mlm` pulls in dependencies needed to run Megatron-LM training (e.g. `transformers`, `sentencepiece`, `wandb`). `dev` adds development/training tooling (e.g. `nvidia-modelopt`, `transformer-engine`, `tqdm`). Together they give you the stack needed for SFT.
+
+**Using `uv add`**
+
+Yes. If you manage your own project with a `pyproject.toml`, you can add megatron-core as a dependency instead of using a bare venv:
 
 ```bash
-pip install nvidia-modelopt datasets transformers sentencepiece
+cd /path/to/your-project
+uv add "megatron-core[mlm,dev]"
 ```
+
+uv will add it to `pyproject.toml` (and lockfile if present) and install. If the build fails (e.g. setuptools version), install `setuptools` and `packaging` in the required version range in that project first, then run `uv sync` or `uv add` again. For a one-off venv with no project file, `uv pip install` is the right tool.
+
+For Docker, pip-only, or from-source options, see the [Installation Guide](../docs/get-started/install.md).
 
 ## Step 1: Download the Pretrained Model
 
